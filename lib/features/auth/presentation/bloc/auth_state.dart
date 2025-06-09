@@ -16,3 +16,15 @@ class RegisterErrorState extends AuthState {
   final String message;
   RegisterErrorState({required this.message});
 }
+
+class LoginLoadingState extends AuthState {}
+
+class LoginSuccessState extends AuthState {
+  final String message;
+  LoginSuccessState({required this.message});
+}
+
+class LoginErrorState extends AuthState {
+  final String message;
+  LoginErrorState({required this.message});
+}

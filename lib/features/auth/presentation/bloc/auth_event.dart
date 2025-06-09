@@ -7,3 +7,8 @@ class RegisterEvent extends AuthEvent {
   final Map<String, dynamic> userData;
   RegisterEvent({required this.userData});
 }
+
+class LoginEvent extends AuthEvent {
+  final Map<String, dynamic> loginData;
+  LoginEvent({required this.loginData});
+}

@@ -10,6 +10,9 @@ class ApiCalls {
       final Dio dio = Dio(
         BaseOptions(
           baseUrl: ApiConstants.baseUrl,
+          connectTimeout: Duration(seconds: 15),
+          sendTimeout: Duration(seconds: 15),
+          receiveTimeout: Duration(seconds: 15),
         ),
       );
       final result = await dio.post(endpoint, data: data);

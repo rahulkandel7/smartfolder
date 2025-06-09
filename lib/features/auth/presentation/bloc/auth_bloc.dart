@@ -9,6 +9,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepositories authRepositories;
   AuthBloc(this.authRepositories) : super(AuthInitial()) {
     on<RegisterEvent>(_userRegister);
+    on<LoginEvent>(_loginUser);
   }
 
   _userRegister(RegisterEvent event, emit) async {
@@ -19,6 +20,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (error) => emit(RegisterErrorState(message: error.errorMessage)),
       (success) => emit(
         RegisterSuccessState(message: success),
+      ),
+    );
+  }
+
+  _loginUser(LoginEvent event, emit) async {
+    emit(LoginLoadingState());
+    final result = await authRepositories.loginUser(loginData: event.loginData);
+    result.fold(
+      (error) => emit(LoginErrorState(message: error.errorMessage)),
+      (success) => emit(
+        LoginSuccessState(message: success),
       ),
     );
   }

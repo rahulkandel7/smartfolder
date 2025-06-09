@@ -46,7 +46,8 @@ class CustomDioException implements Exception {
       case 400:
         return error["message"] ?? "Bad request. Please try again.";
       case 401:
-        return "You’ve been logged out. Please sign in again.";
+        return error["message"] ??
+            "You’ve been logged out. Please sign in again.";
       case 403:
         return error["message"] ?? "Forbidden. You don't have access.";
       case 404:

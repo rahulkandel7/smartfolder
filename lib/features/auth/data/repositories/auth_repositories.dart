@@ -6,6 +6,9 @@ import 'package:smart_folder_mobile_app/features/auth/data/sources/auth_data_sou
 abstract class AuthRepositories {
   Future<Either<ApiError, String>> registerUser(
       {required Map<String, dynamic> userData});
+
+  Future<Either<ApiError, String>> loginUser(
+      {required Map<String, dynamic> loginData});
 }
 
 class AuthRepositoriesImpl extends AuthRepositories {
@@ -21,6 +24,21 @@ class AuthRepositoriesImpl extends AuthRepositories {
       return right(result);
     } on CustomDioException catch (e) {
       print(e.message);
+      return left(
+        ApiError(
+          errorMessage: e.message.toString(),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ApiError, String>> loginUser(
+      {required Map<String, dynamic> loginData}) async {
+    try {
+      final result = await authDataSources.loginUser(loginData: loginData);
+      return right(result);
+    } on CustomDioException catch (e) {
       return left(
         ApiError(
           errorMessage: e.message.toString(),

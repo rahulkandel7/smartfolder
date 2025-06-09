@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_folder_mobile_app/constants/app_routes.dart';
+import 'package:smart_folder_mobile_app/core/utils/toaster.dart';
+import 'package:smart_folder_mobile_app/features/auth/presentation/bloc/auth_bloc.dart';
 
 import '../widgets/input_fields.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _loginKey = GlobalKey();
+
+  String? email;
+  String? password;
 
   @override
   Widget build(BuildContext context) {
@@ -29,27 +42,84 @@ class LoginScreen extends StatelessWidget {
                 height: 10,
               ),
               Form(
+                key: _loginKey,
                 child: Column(
                   spacing: 20,
                   children: [
                     inputFields(
+                      onSaved: (value) {
+                        setState(() {
+                          email = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please provide email';
+                        } else {
+                          return null;
+                        }
+                      },
                       context: context,
                       icon: Icons.email_outlined,
                       hintText: "Email address",
                       labelText: "Email",
                     ),
                     inputFields(
+                      onSaved: (value) {
+                        setState(() {
+                          password = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please provide password';
+                        } else {
+                          return null;
+                        }
+                      },
                       context: context,
                       icon: Icons.lock_outline_rounded,
                       hintText: "Password",
                       labelText: "Password",
                       obscure: true,
                     ),
-                    FilledButton.tonal(
-                      onPressed: () {},
-                      child: Text(
-                        "Login",
-                      ),
+                    BlocConsumer<AuthBloc, AuthState>(
+                      listener: (context, state) {
+                        if (state is LoginSuccessState) {
+                          showToaster(context: context, message: state.message);
+                          Navigator.of(context)
+                              .pushReplacementNamed(AppRoutes.homeScreen);
+                        }
+                        if (state is LoginErrorState) {
+                          showToaster(
+                            context: context,
+                            message: state.message,
+                            backgroundColor: Colors.red,
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        return FilledButton.tonal(
+                          onPressed: state is LoginLoadingState
+                              ? null
+                              : () {
+                                  if (!_loginKey.currentState!.validate()) {
+                                    return;
+                                  }
+                                  _loginKey.currentState!.save();
+                                  final Map<String, dynamic> loginData = {
+                                    'email': email,
+                                    'password': password
+                                  };
+                                  context.read<AuthBloc>().add(
+                                        LoginEvent(loginData: loginData),
+                                      );
+                                },
+                          child: Text(
+                            "Login",
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
