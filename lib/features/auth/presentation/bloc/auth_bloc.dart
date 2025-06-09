@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_folder_mobile_app/features/auth/data/repositories/auth_repositories.dart';
 
 part 'auth_event.dart';
@@ -10,6 +11,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.authRepositories) : super(AuthInitial()) {
     on<RegisterEvent>(_userRegister);
     on<LoginEvent>(_loginUser);
+    on<LogoutEvent>(_logoutUser);
   }
 
   _userRegister(RegisterEvent event, emit) async {
@@ -32,6 +34,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (success) => emit(
         LoginSuccessState(message: success),
       ),
+    );
+  }
+
+  _logoutUser(LogoutEvent event, emit) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    emit(LogoutLoadingState());
+    final result = await authRepositories.logoutUser();
+    result.fold(
+      (error) => emit(LogoutErrorState(message: error.errorMessage)),
+      (success) {
+        preferences.clear();
+        emit(LogoutSuccessState(message: success));
+      },
     );
   }
 }

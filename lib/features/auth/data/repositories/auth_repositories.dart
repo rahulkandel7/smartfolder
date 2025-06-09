@@ -9,6 +9,8 @@ abstract class AuthRepositories {
 
   Future<Either<ApiError, String>> loginUser(
       {required Map<String, dynamic> loginData});
+
+  Future<Either<ApiError, String>> logoutUser();
 }
 
 class AuthRepositoriesImpl extends AuthRepositories {
@@ -37,6 +39,20 @@ class AuthRepositoriesImpl extends AuthRepositories {
       {required Map<String, dynamic> loginData}) async {
     try {
       final result = await authDataSources.loginUser(loginData: loginData);
+      return right(result);
+    } on CustomDioException catch (e) {
+      return left(
+        ApiError(
+          errorMessage: e.message.toString(),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ApiError, String>> logoutUser() async {
+    try {
+      final result = await authDataSources.logoutUser();
       return right(result);
     } on CustomDioException catch (e) {
       return left(

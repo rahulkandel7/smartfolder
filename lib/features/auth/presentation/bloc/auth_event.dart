@@ -12,3 +12,5 @@ class LoginEvent extends AuthEvent {
   final Map<String, dynamic> loginData;
   LoginEvent({required this.loginData});
 }
+
+class LogoutEvent extends AuthEvent {}

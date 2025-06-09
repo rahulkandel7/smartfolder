@@ -28,3 +28,15 @@ class LoginErrorState extends AuthState {
   final String message;
   LoginErrorState({required this.message});
 }
+
+class LogoutLoadingState extends AuthState {}
+
+class LogoutSuccessState extends AuthState {
+  final String message;
+  LogoutSuccessState({required this.message});
+}
+
+class LogoutErrorState extends AuthState {
+  final String message;
+  LogoutErrorState({required this.message});
+}

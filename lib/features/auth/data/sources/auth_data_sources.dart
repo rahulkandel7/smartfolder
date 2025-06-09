@@ -11,6 +11,9 @@ abstract class AuthDataSources {
 
   // * Login user
   Future<String> loginUser({required Map<String, dynamic> loginData});
+
+  //*Logout User
+  Future<String> logoutUser();
 }
 
 class AuthDataSourceImpl extends AuthDataSources {
@@ -49,5 +52,12 @@ class AuthDataSourceImpl extends AuthDataSources {
     print(response);
 
     return 'Loggedin successfully';
+  }
+
+  @override
+  Future<String> logoutUser() async {
+    final response = await apiCalls.postDataWithAuthorize(
+        endpoint: ApiConstants.logoutUserRoute);
+    return response['message'];
   }
 }
